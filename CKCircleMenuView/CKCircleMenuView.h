@@ -71,7 +71,7 @@ typedef enum {
  *                     currently icon images should be 32x32 points
  *                     (64x64 px for retina)
  */
-- (id)initAtOrigin:(CGPoint)aPoint usingOptions:(NSDictionary*)anOptionsDictionary withImageArray:(NSArray*)anImageArray;
+- (id)initAtOrigin:(CGPoint)aPoint usingOptions:(NSDictionary*)anOptionsDictionary withImageArray:(NSArray*)anImageArray withTransform:(CATransform3D)transform3d;
 
 /**
  * Opens the menu with the buttons and settings specified in the

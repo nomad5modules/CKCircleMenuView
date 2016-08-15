@@ -105,13 +105,13 @@ NSString* const CIRCLE_MENU_LINE_MODE = @"kCircleMenuLineMode";
     return self;
 }
 
-- (id)initAtOrigin:(CGPoint)aPoint usingOptions:(NSDictionary *)anOptionsDictionary withImageArray:(NSArray *)anImageArray
+- (id)initAtOrigin:(CGPoint)aPoint usingOptions:(NSDictionary *)anOptionsDictionary withImageArray:(NSArray *)anImageArray withTransform:(CATransform3D)transform3d
 {
     self = [self initWithOptions:anOptionsDictionary];
     if (self) {
         int tTag = 1;
         for (UIImage* img in anImageArray) {
-            UIView* tView = [self createButtonViewWithImage:img andTag:tTag];
+            UIView* tView = [self createButtonViewWithImage:img andTag:tTag andTransform:transform3d];
             [self.buttons addObject:tView];
             tTag += 1;
         }
@@ -129,7 +129,7 @@ NSString* const CIRCLE_MENU_LINE_MODE = @"kCircleMenuLineMode";
         va_list args;
         va_start(args, anImage);
         for (UIImage* img = anImage; img != nil; img = va_arg(args, UIImage*)) {
-            UIView* tView = [self createButtonViewWithImage:img andTag:tTag];
+            UIView* tView = [self createButtonViewWithImage:img andTag:tTag andTransform:CATransform3DIdentity];
             [self.buttons addObject:tView];
             tTag += 1;
         }
@@ -171,7 +171,7 @@ NSString* const CIRCLE_MENU_LINE_MODE = @"kCircleMenuLineMode";
  * @param aTag unique identifier (should be index + 1)
  * @return UIView to be used as button
  */
-- (UIView*)createButtonViewWithImage:(UIImage*)anImage andTag:(int)aTag
+- (UIView*)createButtonViewWithImage:(UIImage*)anImage andTag:(int)aTag andTransform:(CATransform3D)transform3d
 {
     UIButton* tButton = [UIButton buttonWithType:UIButtonTypeCustom];
     
@@ -181,6 +181,9 @@ NSString* const CIRCLE_MENU_LINE_MODE = @"kCircleMenuLineMode";
         CGFloat tButtonViewX = self.buttonRadius - anImage.size.width / 2;
         CGFloat tButtonViewY = self.buttonRadius - anImage.size.height / 2;
         tButton.frame = CGRectMake(tButtonViewX, tButtonViewY, anImage.size.width, anImage.size.height);
+        tButton.layer.transform = transform3d;
+        tButton.clipsToBounds = false;
+        //tButton.contentMode = UIViewContentModeScaleAspectFill;
     }
     
     [tButton setImage:anImage forState:UIControlStateNormal];
@@ -189,7 +192,7 @@ NSString* const CIRCLE_MENU_LINE_MODE = @"kCircleMenuLineMode";
     UIView* tInnerView = [[CKRoundView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.buttonRadius * 2, self.buttonRadius * 2)];
     tInnerView.backgroundColor = self.innerViewColor;
     tInnerView.opaque = YES;
-    tInnerView.clipsToBounds = NO;
+    tInnerView.clipsToBounds = YES;
     tInnerView.layer.cornerRadius = self.buttonRadius;
     tInnerView.layer.borderColor = [self.borderViewColor CGColor];
     tInnerView.layer.borderWidth = self.buttonBorderWidth;
